@@ -81,7 +81,7 @@ For example, the following call:
 
  (apply-interactive
   (lambda (x y &rest z)
-    (interactive (list (read-number \"Factor: \") 
+    (interactive (list (read-number \"Factor: \")
 		       '<> '&rest '<>))
     (* x (apply '+ y z))))
 
@@ -102,7 +102,9 @@ by x."
 	  (eval `(lambda ,args2
 		   (,@(if restp `(apply ,func) `(,func))
 		    ,@(mapcar
-		       (lambda (x) (if (eq x '<>) (pop args4) x))
+		       (lambda (x) (if (eq x '<>) (pop args4)
+				     (if (symbolp x) (list 'quote x)
+				       x)))
 		       args3)))))
       func)))
 
@@ -144,14 +146,10 @@ For more details see `apply-interactive'."
 	   (func (if (equal choice otherstr)
 		     (read-from-minibuffer
 		      otherprompt nil nil t 'ido-read-function-history)
-		   (cdr (cl-assoc choice funcs
-				  :test (lambda (a b) (equal (asstring a)
-							     (asstring b))))))))
+		   (cdr (assoc-string choice funcs)))))
       (if (not (functionp func))
 	  (error "Invalid function: %S" func)
 	(apply-interactive func)))))
-
-
 
 (provide 'ido-choose-function)
 
