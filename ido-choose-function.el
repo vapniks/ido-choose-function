@@ -103,7 +103,8 @@ by x."
 		   (,@(if restp `(apply ,func) `(,func))
 		    ,@(mapcar
 		       (lambda (x) (if (eq x '<>) (pop args4)
-				     (if (symbolp x) (list 'quote x)
+				     (if (or (symbolp x) (listp x))
+					 (list 'quote x)
 				       x)))
 		       args3)))))
       func)))
